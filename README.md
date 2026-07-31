@@ -1,0 +1,1 @@
+Repositório para IaC em Terraform para projeto de TCC2
