@@ -1,3 +1,21 @@
+# Terraform
 .terraform/
 *.tfstate
-*.tfstate.backup
+*.tfstate.*
+
+# Planos
+*.tfplan
+
+# Variáveis locais
+terraform.tfvars
+*.auto.tfvars
+
+# Build
+build/
+
+# Python
+__pycache__/
+*.pyc
+
+# VS Code
+.vscode/
