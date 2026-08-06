@@ -43,9 +43,9 @@ resource "aws_lambda_function" "hello_world" {
   filename         = data.archive_file.lambda_zip.output_path
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
 
-  timeout     = 10                  # Tempo limite de execução em segundos
-  memory_size = 512                 # Tamanho da memória em MB
-  architectures = ["x86_64"]        # Arquitetura da função (x86_64 ou arm64)
+  timeout     = 10                                      # Tempo limite de execução em segundos
+  memory_size = var.lambda_memory_size                  # Tamanho da memória em MB
+  architectures = [var.lambda_architecture]             # Arquitetura da função (x86_64 ou arm64)
 
   environment {
     variables = {

@@ -9,6 +9,6 @@ output "lambda_function_arn" {
 }
 
 output "lambda_invoke_arn" {
-  description = "ARN de invocação (útil para integrar com API Gateway)"
+  description = "ARN de invocação"
   value       = aws_lambda_function.hello_world.invoke_arn
 }

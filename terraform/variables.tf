@@ -21,3 +21,17 @@ variable "environment" {
   type        = string
   default     = "dev"
 }
+
+############
+
+variable "lambda_memory_size" {
+  description = "Tamanho da memória da função Lambda em MB (128, 256, 512, 1024, 2048, 3008)"
+  type        = number
+  default     = 2048
+}
+
+variable "lambda_architecture" {
+  description = "Arquitetura da função Lambda (x86_64 ou arm64)"
+  type        = string
+  default     = "arm64"
+}
