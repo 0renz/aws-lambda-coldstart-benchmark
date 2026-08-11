@@ -1,14 +1,13 @@
-output "lambda_function_name" {
-  description = "Nome da função Lambda criada"
-  value       = aws_lambda_function.hello_world.function_name
-}
+output "lambda_functions" {
+  description = "Lambdas criadas"
 
-output "lambda_function_arn" {
-  description = "ARN da função Lambda"
-  value       = aws_lambda_function.hello_world.arn
-}
-
-output "lambda_invoke_arn" {
-  description = "ARN de invocação"
-  value       = aws_lambda_function.hello_world.invoke_arn
+  value = [
+    for lambda in aws_lambda_function.lambda :
+    {
+      name          = lambda.function_name
+      arn           = lambda.arn
+      architecture  = lambda.architectures[0]
+      memory        = lambda.memory_size
+    }
+  ]
 }

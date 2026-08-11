@@ -35,3 +35,14 @@ variable "lambda_architecture" {
   type        = string
   default     = "arm64"
 }
+
+variable "lambda_count" {
+  description = "Quantidade de Lambdas a serem criadas"
+  type        = number
+  default     = 1
+
+  validation {
+    condition     = var.lambda_count >= 1
+    error_message = "A quantidade de Lambdas deve ser maior ou igual a 1."
+  }
+}
