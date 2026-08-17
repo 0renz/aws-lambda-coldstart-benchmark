@@ -36,7 +36,6 @@ fi
 # ============================================
 
 case "$ARCH" in
-
     x86)
         TERRAFORM_ARCH="x86_64"
         ;;
@@ -53,7 +52,6 @@ case "$ARCH" in
         echo "  arm"
         exit 1
         ;;
-
 esac
 
 
@@ -68,25 +66,10 @@ fi
 
 
 # ============================================
-# Exibição da configuração
-# ============================================
-
-echo
-echo "=========================================="
-echo " Configuração das Lambdas"
-echo "=========================================="
-echo "Quantidade : $COUNT"
-echo "Arquitetura: $TERRAFORM_ARCH"
-echo "Memória    : ${MEMORY} MB"
-echo "=========================================="
-echo
-
-
-# ============================================
 # Terraform Init
 # ============================================
 
-echo "[1/3] Inicializando Terraform..."
+echo "[1/4] Inicializando Terraform..."
 
 terraform init
 
@@ -96,7 +79,7 @@ terraform init
 # ============================================
 
 echo
-echo "[2/3] Criando plano..."
+echo "[2/4] Criando plano..."
 
 terraform plan \
     -var="lambda_count=$COUNT" \
@@ -105,7 +88,7 @@ terraform plan \
 
 
 # ============================================
-# Terraform Apply
+# Confirmação
 # ============================================
 
 echo
@@ -116,8 +99,13 @@ if [[ "$CONFIRM" != "y" && "$CONFIRM" != "Y" ]]; then
     exit 0
 fi
 
+
+# ============================================
+# Terraform Apply
+# ============================================
+
 echo
-echo "[3/3] Criando Lambdas na AWS..."
+echo "[3/4] Criando Lambdas e Function URLs..."
 
 terraform apply \
     -var="lambda_count=$COUNT" \
@@ -126,9 +114,52 @@ terraform apply \
     -auto-approve
 
 
+# ============================================
+# Obter URLs
+# ============================================
+
 echo
 echo "=========================================="
-echo " Lambdas criadas com sucesso!"
+echo " Lambdas criadas"
 echo "=========================================="
 
 terraform output lambda_functions
+
+
+# ============================================
+# Invocar Lambdas
+# ============================================
+
+echo
+echo "[4/4] Invocando Lambdas via aws invoke..."
+echo
+
+
+FUNCTIONS=$(terraform output -json lambda_functions)
+
+for ((i=0; i<COUNT; i++)); do
+
+    FUNCTION_NAME=$(echo "$FUNCTIONS" | jq -r ".[$i].name")
+
+    echo
+    echo "=========================================="
+    echo "Lambda $((i + 1))/$COUNT"
+    echo "=========================================="
+    echo "Nome: $FUNCTION_NAME"
+    echo
+
+    aws lambda invoke \
+        --function-name "$FUNCTION_NAME" \
+        --payload '{"nome":"lorenzo"}' \
+        "/responses/response_$((i + 1)).json" \
+        --cli-binary-format raw-in-base64-out \
+    echo "Resposta:"
+    cat "response_$((i + 1)).json"
+    echo
+
+done
+
+echo
+echo "=========================================="
+echo " Invocações concluídas"
+echo "=========================================="
