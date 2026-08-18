@@ -125,6 +125,41 @@ echo "=========================================="
 
 terraform output lambda_functions
 
+# ============================================
+# Função para obter cold start
+# ============================================
+get_init_duration() {
+
+    FUNCTION_NAME=$1
+    START_TIME=$2
+
+    LOG_GROUP="/aws/lambda/$FUNCTION_NAME"
+
+    for attempt in {1..10}; do
+
+        LOG=$(aws logs filter-log-events \
+            --log-group-name "$LOG_GROUP" \
+            --start-time "$START_TIME" \
+            --filter-pattern "REPORT" \
+            --query 'events[*].message' \
+            --output text 2>/dev/null || true)
+
+        INIT_DURATION=$(echo "$LOG" |
+            grep -oP 'Init Duration: \K[0-9.]+' |
+            tail -1)
+
+        if [ -n "$INIT_DURATION" ]; then
+            echo "$INIT_DURATION"
+            return 0
+        fi
+
+        echo "Aguardando CloudWatch... tentativa $attempt/10"
+
+        sleep 2
+    done
+
+    echo "N/A"
+}
 
 # ============================================
 # Invocar Lambdas
@@ -140,6 +175,7 @@ FUNCTIONS=$(terraform output -json lambda_functions)
 for ((i=0; i<COUNT; i++)); do
 
     FUNCTION_NAME=$(echo "$FUNCTIONS" | jq -r ".[$i].name")
+    START_TIME=$(date +%s000)
 
     echo
     echo "=========================================="
@@ -151,12 +187,12 @@ for ((i=0; i<COUNT; i++)); do
     aws lambda invoke \
         --function-name "$FUNCTION_NAME" \
         --payload '{"nome":"lorenzo"}' \
-        "/responses/response_$((i + 1)).json" \
         --cli-binary-format raw-in-base64-out \
-    echo "Resposta:"
-    cat "response_$((i + 1)).json"
+        /dev/stdout
     echo
 
+    INIT_DURATION=$(get_init_duration "$FUNCTION_NAME" "$START_TIME")
+    echo "Duração da inicialização: $INIT_DURATION ms"
 done
 
 echo
