@@ -126,14 +126,17 @@ echo "=========================================="
 terraform output lambda_functions
 
 # ============================================
-# Função para obter cold start
+# Função que obtém cold start, armazena o nome da função e o tempo de início em uma tabela .csv
 # ============================================
 get_init_duration() {
 
     FUNCTION_NAME=$1
-    START_TIME=$2
-
+    CSV_FILE="init_duration_results.csv"
     LOG_GROUP="/aws/lambda/$FUNCTION_NAME"
+
+    if [ ! -f "$CSV_FILE" ]; then
+        echo "function_name,init_duration_ms" > "$CSV_FILE"
+    fi
 
     for attempt in {1..10}; do
 
@@ -149,7 +152,13 @@ get_init_duration() {
             tail -1)
 
         if [ -n "$INIT_DURATION" ]; then
-            echo "$INIT_DURATION"
+
+            echo "Init Duration: ${INIT_DURATION} ms"
+
+            # Salva no CSV
+            echo "$FUNCTION_NAME,$INIT_DURATION" \
+                >> "$CSV_FILE"
+
             return 0
         fi
 
@@ -158,7 +167,13 @@ get_init_duration() {
         sleep 2
     done
 
-    echo "N/A"
+    echo "Init Duration não encontrado."
+
+    # Registra também quando não foi possível obter a métrica
+    echo "$FUNCTION_NAME,$ARCHITECTURE,$MEMORY_SIZE,N/A" \
+        >> "$CSV_FILE"
+
+    return 1
 }
 
 # ============================================
