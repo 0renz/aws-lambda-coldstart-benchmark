@@ -133,9 +133,11 @@ get_init_duration() {
     FUNCTION_NAME=$1
     CSV_FILE="init_duration_results.csv"
     LOG_GROUP="/aws/lambda/$FUNCTION_NAME"
+    ARCHITECTURE=$2
+    MEMORY_SIZE=$3
 
     if [ ! -f "$CSV_FILE" ]; then
-        echo "function_name,init_duration_ms" > "$CSV_FILE"
+        echo "function_name,architecture,memory_size,init_duration_ms" > "$CSV_FILE"
     fi
 
     for attempt in {1..10}; do
@@ -156,7 +158,7 @@ get_init_duration() {
             echo "Init Duration: ${INIT_DURATION} ms"
 
             # Salva no CSV
-            echo "$FUNCTION_NAME,$INIT_DURATION" \
+            echo "$FUNCTION_NAME,$ARCHITECTURE,$MEMORY_SIZE,$INIT_DURATION" \
                 >> "$CSV_FILE"
 
             return 0
@@ -190,23 +192,29 @@ FUNCTIONS=$(terraform output -json lambda_functions)
 for ((i=0; i<COUNT; i++)); do
 
     FUNCTION_NAME=$(echo "$FUNCTIONS" | jq -r ".[$i].name")
-    START_TIME=$(date +%s000)
+    ARCHITECTURE=$(echo "$FUNCTIONS" | jq -r ".[$i].architecture")
+    MEMORY_SIZE=$(echo "$FUNCTIONS" | jq -r ".[$i].memory")
 
     echo
     echo "=========================================="
     echo "Lambda $((i + 1))/$COUNT"
     echo "=========================================="
-    echo "Nome: $FUNCTION_NAME"
+    echo "Nome        : $FUNCTION_NAME"
+    echo "Arquitetura : $ARCHITECTURE"
+    echo "Memória     : ${MEMORY_SIZE} MB"
     echo
+
+    START_TIME=$(date +%s000)
 
     aws lambda invoke \
         --function-name "$FUNCTION_NAME" \
-        --payload '{"nome":"lorenzo"}' \
+        --payload "{\"queryStringParameters\":{\"test\":\"cold-start\",\"lambda\":\"$((i + 1))\"}}" \
         --cli-binary-format raw-in-base64-out \
-        /dev/stdout
+        /dev/null
+
     echo
 
-    INIT_DURATION=$(get_init_duration "$FUNCTION_NAME" "$START_TIME")
+    INIT_DURATION=$(get_init_duration "$FUNCTION_NAME" "$ARCHITECTURE" "$MEMORY_SIZE")
     echo "Duração da inicialização: $INIT_DURATION ms"
 done
 

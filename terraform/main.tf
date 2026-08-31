@@ -49,7 +49,7 @@ resource "aws_lambda_function" "lambda" {
   )
 
   role    = aws_iam_role.lambda_role.arn
-  handler = "index.handler"
+  handler = "index.lambda_handler"
   runtime = var.runtime
 
   filename         = data.archive_file.lambda_zip.output_path

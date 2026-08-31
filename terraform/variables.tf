@@ -7,7 +7,7 @@ variable "aws_region" {
 variable "function_name" {
   description = "Nome da função Lambda"
   type        = string
-  default     = "hello-world-lambda"
+  default     = "lambda"
 }
 
 variable "runtime" {
@@ -40,9 +40,4 @@ variable "lambda_count" {
   description = "Quantidade de Lambdas a serem criadas"
   type        = number
   default     = 1
-
-  validation {
-    condition     = var.lambda_count >= 1
-    error_message = "A quantidade de Lambdas deve ser maior ou igual a 1."
-  }
 }
