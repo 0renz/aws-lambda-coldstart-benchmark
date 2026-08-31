@@ -1,22 +1,22 @@
 import json
+import logging
 
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
-def handler(event, context):
-    """
-    Função Lambda simples - Hello World.
-    """
-    nome = event.get("nome", "mundo") if isinstance(event, dict) else "mundo"
+def lambda_handler(event, context):
+    logger.info(f"Received event: {json.dumps(event)}")
     
-    corpo = {
-        "mensagem": f"Ola, {nome}! Lambda executada com sucesso."
-    }
+    # Extract query parameters or body if coming from API Gateway
+    query_params = event.get('queryStringParameters', {})
     
-    print(corpo["mensagem"])
-
     return {
-        "statusCode": 200,
-        "headers": {
-            "Content-Type": "application/json"
+        'statusCode': 200,
+        'headers': {
+            'Content-Type': 'application/json'
         },
-        "body": json.dumps(corpo, ensure_ascii=False)
+        'body': json.dumps({
+            'message': 'Hello from AWS Lambda!',
+            'received_params': query_params
+        })
     }
