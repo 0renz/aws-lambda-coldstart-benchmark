@@ -2,6 +2,21 @@
 
 set -e
 
+# Diretório raiz do projeto
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# Diretórios
+TERRAFORM_DIR="$PROJECT_ROOT/terraform"
+RESULTS_DIR="$PROJECT_ROOT/results"
+
+# Arquivo CSV
+CSV_FILE="$RESULTS_DIR/init_duration_results.csv"
+
+# Criar diretório de resultados caso não exista
+mkdir -p "$RESULTS_DIR"
+
+cd "$TERRAFORM_DIR"
+
 # ============================================
 # Validação dos argumentos
 # ============================================
@@ -131,7 +146,7 @@ terraform output lambda_functions
 get_init_duration() {
 
     FUNCTION_NAME=$1
-    CSV_FILE="init_duration_results.csv"
+    CSV_FILE="$PROJECT_ROOT/results/init_duration_results.csv"  # Trocar de diretório para fora do Terraform, talvez?
     LOG_GROUP="/aws/lambda/$FUNCTION_NAME"
     ARCHITECTURE=$2
     MEMORY_SIZE=$3
