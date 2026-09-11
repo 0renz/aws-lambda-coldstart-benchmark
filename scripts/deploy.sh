@@ -146,7 +146,7 @@ terraform output lambda_functions
 get_init_duration() {
 
     FUNCTION_NAME=$1
-    CSV_FILE="$PROJECT_ROOT/results/init_duration_results.csv"  # Trocar de diretório para fora do Terraform, talvez?
+    CSV_FILE="$PROJECT_ROOT/results/init_duration_results.csv"
     LOG_GROUP="/aws/lambda/$FUNCTION_NAME"
     ARCHITECTURE=$2
     MEMORY_SIZE=$3
