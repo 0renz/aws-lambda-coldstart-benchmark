@@ -24,7 +24,12 @@ Projeto de Trabalho de Conclusão de Curso (TCC2) que implementa **Infrastructur
 │   └── deploy.sh       # Script de deploy e testes
 ├── results/            # Diretório de resultados (CSV com métricas)
 └── build/              # Artefatos compilados (ZIP das Lambdas)
+
 ```
+
+## Diagrama arquitetural
+![Diagrama arquitetural](aws-diagram.drawio.png)
+
 
 ## Como Usar
 
