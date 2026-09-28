@@ -13,22 +13,40 @@ Projeto de Trabalho de Conclusão de Curso (TCC2) que implementa **Infrastructur
 
 ```
 .
-├── terraform/          # Definições de infraestrutura Terraform
-│   ├── main.tf         # Recursos principais (Lambdas, IAM, CloudWatch)
-│   ├── variables.tf    # Variáveis de entrada
-│   ├── outputs.tf      # Saídas da infraestrutura
-│   └── versions.tf     # Configurações de versão e providers
-├── src/
-│   └── index.py        # Código Python da função Lambda
-├── scripts/
-│   └── deploy.sh       # Script de deploy e testes
-├── results/            # Diretório de resultados (CSV com métricas)
-└── build/              # Artefatos compilados (ZIP das Lambdas)
-
+├── analysis/                                # Análise estatística dos resultados
+│   ├── notebooks/                           # Notebooks Jupyter
+│   │   ├── 01_descriptive_statistics.ipynb  # Estatísticas descritivas
+│   │   └── 02_visual_analysis.ipynb         # Análise e visualização dos dados
+│   └── requirements.txt                     # Dependências Python
+│
+├── assets/                         # Recursos visuais
+│   └── aws-diagram.drawio.png      # Diagrama da arquitetura AWS
+│
+├── build/                          # Artefatos de build
+│   └── lambda.zip                  # Pacote da função Lambda
+│
+├── results/                        # Resultados dos experimentos
+│   └── init_duration_results.csv   # Métricas de Init Duration
+│
+├── scripts/                        # Scripts de automação
+│   └── deploy.sh                   # Deploy e execução dos experimentos
+│
+├── src/                            # Código-fonte
+│   └── index.py                    # Função Lambda
+│
+├── terraform/                      # Infraestrutura como código
+│   ├── main.tf                     # Recursos AWS
+│   ├── variables.tf                # Variáveis de entrada
+│   ├── outputs.tf                  # Saídas da infraestrutura
+│   └── versions.tf                 # Versões e providers
+│
+├── .gitignore                      # Arquivos ignorados pelo Git
+├── LICENSE                         # Licença
+└── README.md                       # Documentação
 ```
 
 ## Diagrama arquitetural
-![Diagrama arquitetural](aws-diagram.drawio.png)
+![Diagrama arquitetural](./assets/aws-diagram.drawio.png)
 
 
 ## Como Usar
