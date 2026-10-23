@@ -46,7 +46,7 @@ Projeto de Trabalho de Conclusão de Curso (TCC2) que implementa **Infrastructur
 ```
 
 ## Diagrama arquitetural
-![Diagrama arquitetural](./assets/aws-diagram.drawio.png)
+![Diagrama arquitetural](./assets/aws-diagram-white.png)
 
 
 ## Como Usar
