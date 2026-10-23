@@ -16,7 +16,7 @@ Projeto de Trabalho de Conclusão de Curso (TCC2) que implementa **Infrastructur
 ├── analysis/                                # Análise estatística dos resultados
 │   ├── notebooks/                           # Notebooks Jupyter
 │   │   ├── 01_descriptive_statistics.ipynb  # Estatísticas descritivas
-│   │   └── 02_visual_analysis.ipynb         # Análise e visualização dos dados
+│   │   └── plot_cold_start.py               # Plot de gráficos sob os dados
 │   └── requirements.txt                     # Dependências Python
 │
 ├── assets/                         # Recursos visuais
@@ -139,6 +139,28 @@ O projeto coleta métricas de cold start (Init Duration) de cada Lambda invocada
 - **Impacto da memória**: Como o tamanho de memória afeta o desempenho
 - **Variabilidade**: Padrão de comportamento entre múltiplas invocações
 
+
+## Análise descritiva
+
+O notebook [analysis/notebooks/01_descriptive_statistics.ipynb](analysis/notebooks/01_descriptive_statistics.ipynb) carrega `results/init_duration_results.csv`, converte `init_duration_ms` para valores numéricos e remove registros inválidos. Em seguida, calcula estatísticas gerais e por cenário (arquitetura e memória): quantidade de amostras, média, mediana, desvio padrão, variância, mínimo, máximo, amplitude, coeficiente de variação, P95 e P99.
+
+Os resultados agrupados são arredondados e salvos em `results/metrics.csv`, que é utilizado pelo script de plotagem. Para executar o notebook, instale as dependências de [analysis/requirements.txt](analysis/requirements.txt) e abra-o no Jupyter:
+
+```bash
+pip install -r analysis/requirements.txt
+jupyter notebook analysis/notebooks/01_descriptive_statistics.ipynb
+```
+
+
+## Código para plotar os gráficos
+
+O script [analysis/notebooks/plot_cold_start.py](analysis/notebooks/plot_cold_start.py) recebe os dados brutos e as métricas agrupadas e salva os gráficos na pasta de saída. Na raiz do projeto, execute:
+
+```bash
+python analysis/notebooks/plot_cold_start.py results/init_duration_results.csv results/metrics.csv analysis/figuras
+```
+
+O script gera boxplots, médias e medianas, variância e desvio padrão, amplitude e coeficiente de variação, ganho percentual do ARM64 sobre o x86_64, P95 e P99, ECDF, heatmaps e regressão do efeito da memória. Também salva os resultados dos testes Mann-Whitney e a tabela de ganhos percentuais em CSV e imprime no terminal os testes de Kruskal-Wallis, Spearman, Levene e a verificação de consistência entre os arquivos de entrada.
 
 ## Autor
 Lorenzo Costa Schauenberg
